@@ -1,0 +1,36 @@
+
+services:
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - ai-model
+
+  ai-model:
+    build: ./ai-model
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://admin:password@database:5432/aidb
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: aidb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d aidb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

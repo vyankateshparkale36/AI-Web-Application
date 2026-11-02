@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Web Application</title>
+</head>
+
+<body>
+
+    <h1>Welcome to AI Application</h1>
+
+    <input id="text" placeholder="Enter your text">
+
+    <button onclick="predict()">Submit</button>
+
+    <h3 id="result"></h3>
+
+    <script>
+    async function predict() {
+
+        const text =
+        document.getElementById("text").value;
+
+        const response = await fetch(
+            "http://localhost:8000/predict",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({text})
+            }
+        );
+
+        const data = await response.json();
+
+        document.getElementById("result").innerText =
+        data.prediction;
+    }
+    </script>
+
+</body>
+</html>
